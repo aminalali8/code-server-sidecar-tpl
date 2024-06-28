@@ -15,8 +15,8 @@ components:
     -
         kind: Application
         name: frontend
-        gitRepo: 'https://github.com/aminalali8/demo-books.git'
-        gitBranch: master
+        gitRepo: 'https://github.com/bunnyshell/demo-books.git'
+        gitBranch: code-server-dockerfile
         gitApplicationPath: frontend
         dockerCompose:
             build:
@@ -69,8 +69,8 @@ components:
     -
         kind: Application
         name: backend
-        gitRepo: 'https://github.com/aminalali8/demo-books.git'
-        gitBranch: master
+        gitRepo: 'https://github.com/bunnyshell/demo-books.git'
+        gitBranch: code-server-dockerfile
         gitApplicationPath: backend
         dockerCompose:
             build:
