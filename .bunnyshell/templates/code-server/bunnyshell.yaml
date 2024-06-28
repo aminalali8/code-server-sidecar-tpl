@@ -24,7 +24,6 @@ components:
                 dockerfile: Dockerfile
                 args:
                     REACT_APP_BASE_API: 'https://{{ components.backend.ingress.hosts[0] }}'
-                target: prod
             ports:
                 - '8080:8080'
                 - '8443:8443'
