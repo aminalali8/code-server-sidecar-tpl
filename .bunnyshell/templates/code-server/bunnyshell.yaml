@@ -5,9 +5,9 @@ templateVariables:
     CODE_SERVER_HOST: code-server-{{env.base_domain}}
     HASHED_PASSWORD: ''
     PASSWORD: password
-    PGID: '1000'
+    PGID: '1114'
     PROXY_DOMAIN: ''
-    PUID: '1000'
+    PUID: '1114'
     SUDO_PASSWORD: password
     SUDO_PASSWORD_HASH: ''
     TZ: Etc/UTC
