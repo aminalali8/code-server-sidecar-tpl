@@ -1,7 +1,4 @@
-### Documentation for Integrating VS Code as a Sidecar Container using Bunnyshell
-
-## Overview
-
+# Integrating VS Code as a Sidecar Container using Bunnyshell
 This documentation provides a step-by-step guide to integrate VS Code as a sidecar container for remote development using Bunnyshell. The provided `bunnyshell.yaml` template showcases how to achieve this setup effectively.
 
 ## Pre-Requisites
@@ -10,8 +7,8 @@ This documentation provides a step-by-step guide to integrate VS Code as a sidec
 
 To integrate VS Code and avoid permission issues when mounting volumes across containers, you need to adjust the UID and GID of the files in your Dockerfile as follows:
 
-1. **Add a user with UID 1000 and GID 1000:**
-    NOTE: You are not restricted to using UID 1000 or GID 1000. Make sure to update the sidecar PUID and GUID accordingly.
+1. **Add a user with a specified PUID and GUID:**
+    NOTE: You are not restricted to using PUID or GUID. Make sure to update the sidecar PUID and GUID accordingly.
     ```Dockerfile
     RUN addgroup -g 1000 code-server-user && \
         adduser -D -u 1000 -G code-server-user code-server-user && \
@@ -19,14 +16,18 @@ To integrate VS Code and avoid permission issues when mounting volumes across co
     ```
 
 2. **Modify the main command to ensure proper permissions:**
-This can be achieved by either modifying the main command with a `RUN` command or by adding to the `ENTRYPOINT` script to ensure the `code-server-user` has the correct permissions over the necessary directories.
+This can be achieved by either modifying the main command with a `RUN` command or by adding to the `ENTRYPOINT` script to ensure the `code-server-user` (or the user created in the previous step) has the correct permissions over the necessary directories.
 
     ```Dockerfile
-    CMD ["sh", "-c", "chown -R code-server-user:code-server-user /usr/share/nginx/html && nginx -g 'daemon off;'"]
+    RUN chown -R code-server-user:code-server-user /usr/src/app
+    # If you are developing on Node you might need to add the following: 
+    RUN chown -R code-server-user:code-server-user /root/.npm
+    # If you are developing on php using Composer you might need to add the following: 
+    RUN chown -R code-server-user:code-server-user /root/.composer
     ```
 
 
-### Understanding the Need for UID and GID
+### Understanding the Need for PUID and GUID
 
 When mounting volumes across containers, permission issues can arise between the main and sidecar containers. Specifying the user PUID and group PGID ensures consistency and avoids these issues. Use the command `id your_user` to find your user and group IDs.
 
@@ -39,8 +40,8 @@ When mounting volumes across containers, permission issues can arise between the
     ```yaml
     dockerCompose:
         ports:
-            - '80:80'
-            - '8443:8443'
+            - '8080:8080' # main app port
+            - '8443:8443' # code-server port 
     ```
 
 2. **Defining the Sidecar Container:**
@@ -56,7 +57,7 @@ When mounting volumes across containers, permission issues can arise between the
                         -
                             path: /config/workspace
                             target:
-                                path: /usr/share/nginx/html
+                                path: /path/to/src/in/main/container
                                 container: '@parent'
                             initial_contents: '@target'
     ```
@@ -68,6 +69,7 @@ When mounting volumes across containers, permission issues can arise between the
 
     ```yaml
     hosts:
+        ... # host for main application
         -
             hostname: '{{template.vars.CODE_SERVER_HOST}}'
             path: /
@@ -124,15 +126,13 @@ components:
     -
         kind: Application
         name: sample-app
-        gitRepo: 'https://github.com/aminalali8/mini-web.git'
+        gitRepo: 'https://github.com/githubuser/example.git'
         gitBranch: master
         gitApplicationPath: /
         dockerCompose:
-            build:
-                context: .
-                dockerfile: Dockerfile
+            ... 
             ports:
-                - '80:80'
+                - ... # App Port
                 - '8443:8443'
         pod:
             sidecar_containers:
@@ -147,10 +147,7 @@ components:
                                 container: '@parent'
                             initial_contents: '@target'
         hosts:
-            -
-                hostname: 'web-{{env.base_domain}}'
-                path: /
-                servicePort: 80
+            - ... # main app host
             -
                 hostname: '{{template.vars.CODE_SERVER_HOST}}'
                 path: /
