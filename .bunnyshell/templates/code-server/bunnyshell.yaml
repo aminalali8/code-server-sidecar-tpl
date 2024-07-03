@@ -1,13 +1,13 @@
 kind: Environment
-name: code-server
+name: coder-server
 type: primary
 templateVariables:
-    CODE_SERVER_HOST: code-server-{{env.base_domain}}
+    CODE_SERVER_HOST: 'code-server-{{env.base_domain}}'
     HASHED_PASSWORD: ''
     PASSWORD: password
-    PGID: '1114'
+    PGID: '0'
     PROXY_DOMAIN: ''
-    PUID: '1114'
+    PUID: '0'
     SUDO_PASSWORD: password
     SUDO_PASSWORD_HASH: ''
     TZ: Etc/UTC
@@ -16,12 +16,13 @@ components:
         kind: Application
         name: frontend
         gitRepo: 'https://github.com/bunnyshell/demo-books.git'
-        gitBranch: code-server-dockerfile
+        gitBranch: master
         gitApplicationPath: frontend
         dockerCompose:
             build:
                 context: ./frontend
                 dockerfile: Dockerfile
+                target: dev
                 args:
                     REACT_APP_BASE_API: 'https://{{ components.backend.ingress.hosts[0] }}'
             ports:
@@ -34,7 +35,7 @@ components:
                     name: sidecar-code-server
                     shared_paths:
                         -
-                            path: /config/workspace
+                            path: /cs_workspace
                             target:
                                 path: /usr/src/app
                                 container: '@parent'
@@ -54,7 +55,7 @@ components:
         dockerCompose:
             image: 'lscr.io/linuxserver/code-server:4.90.3'
             environment:
-                DEFAULT_WORKSPACE: /config/workspace
+                DEFAULT_WORKSPACE: /cs_workspace
                 HASHED_PASSWORD: '{{template.vars.HASHED_PASSWORD}}'
                 PASSWORD: '{{template.vars.PASSWORD}}'
                 PGID: '{{template.vars.PGID}}'
@@ -65,11 +66,16 @@ components:
                 TZ: '{{ template.vars.TZ }}'
             ports:
                 - '8443:8443'
+        volumes:
+            -
+                name: code-server-data
+                mount: /config
+                subPath: ''
     -
         kind: Application
         name: backend
         gitRepo: 'https://github.com/bunnyshell/demo-books.git'
-        gitBranch: code-server-dockerfile
+        gitBranch: master
         gitApplicationPath: backend
         dockerCompose:
             build:
@@ -110,5 +116,9 @@ components:
 volumes:
     -
         name: db-data
+        size: 1Gi
+        type: disk
+    -
+        name: code-server-data
         size: 1Gi
         type: disk
