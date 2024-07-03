@@ -3,29 +3,7 @@ This documentation provides a step-by-step guide to integrate VS Code as a sidec
 
 ## Pre-Requisites
 
-### Adjusting the Dockerfile
-
-To integrate VS Code and avoid permission issues when mounting volumes across containers, you need to adjust the UID and GID of the files in your Dockerfile as follows:
-
-1. **Add a user with a specified PUID and GUID:**
-    NOTE: You are not restricted to using PUID or GUID. Make sure to update the sidecar PUID and GUID accordingly.
-    ```Dockerfile
-    RUN addgroup -g 1000 code-server-user && \
-        adduser -D -u 1000 -G code-server-user code-server-user && \
-        adduser code-server-user nginx
-    ```
-
-2. **Modify the main command to ensure proper permissions:**
-This can be achieved by either modifying the main command with a `RUN` command or by adding to the `ENTRYPOINT` script to ensure the `code-server-user` (or the user created in the previous step) has the correct permissions over the necessary directories.
-
-    ```Dockerfile
-    RUN chown -R code-server-user:code-server-user /usr/src/app
-    # If you are developing on Node you might need to add the following: 
-    RUN chown -R code-server-user:code-server-user /root/.npm
-    # If you are developing on php using Composer you might need to add the following: 
-    RUN chown -R code-server-user:code-server-user /root/.composer
-    ```
-
+If your application uses a specified UID/GID please adjust the PUID and GUID template variables to reflect the id of the user being created to avoid permission issues. 
 
 ### Understanding the Need for PUID and GUID
 
