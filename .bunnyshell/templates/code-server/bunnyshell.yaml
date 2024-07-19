@@ -1,5 +1,5 @@
 kind: Environment
-name: coder-server
+name: code-server
 type: primary
 templateVariables:
     CODE_SERVER_HOST: 'code-server-{{env.base_domain}}'
