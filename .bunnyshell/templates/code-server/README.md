@@ -52,13 +52,18 @@ This template provides:
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
 | `PASSWORD` | VS Code web interface password | `password` | Yes |
-| `HASHED_PASSWORD` | Hashed version of password (optional) | `` | No |
-| `PUID` | User ID for container permissions | `0` | No |
-| `PGID` | Group ID for container permissions | `0` | No |
-| `SUDO_PASSWORD` | Sudo password for container | `password` | No |
-| `SUDO_PASSWORD_HASH` | Hashed sudo password (optional) | `` | No |
-| `PROXY_DOMAIN` | Custom proxy domain (optional) | `` | No |
-| `TZ` | Timezone setting | `Etc/UTC` | No |
+| `SUDO_PASSWORD` | Sudo password for container | `password` | Yes |
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `HASHED_PASSWORD` | Hashed version of password | `` |
+| `PUID` | User ID for container permissions | `0` |
+| `PGID` | Group ID for container permissions | `0` |
+| `SUDO_PASSWORD_HASH` | Hashed sudo password | `` |
+| `PROXY_DOMAIN` | Custom proxy domain | `` |
+| `TZ` | Timezone setting | `Etc/UTC` |
 
 ### Port Configuration
 
@@ -170,29 +175,6 @@ cs_workspace/                    # Shared workspace (accessible from both contai
 **Permission Errors:**
 - Ensure `PUID` and `PGID` match your user/group IDs
 - Check that shared paths have correct permissions
-
-**VS Code Not Accessible:**
-- Verify port `8443` is exposed on the main application
-- Check that the sidecar container is running
-- Ensure hostname configuration is correct
-
-**Workspace Not Syncing:**
-- Verify `shared_paths` configuration
-- Check that `initial_contents: '@target'` is set
-- Ensure both containers can access the shared volume
-
-### Debug Commands
-
-```bash
-# Check container status
-docker ps
-
-# View container logs
-docker logs <container_name>
-
-# Check shared volume contents
-docker exec -it <container_name> ls -la /cs_workspace
-```
 
 ## 📚 Additional Resources
 

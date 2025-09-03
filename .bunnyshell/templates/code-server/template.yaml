@@ -15,6 +15,7 @@ variables:
   - description: 'Hashed password for authentication (optional)'  
     name: 'HASHED_PASSWORD'
     type: 'string'
+    default: ''
   - description: 'Plain text password for authentication'  
     name: 'PASSWORD'
     type: 'string'
