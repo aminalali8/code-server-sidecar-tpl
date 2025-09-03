@@ -2,12 +2,14 @@
 
 This template demonstrates how to integrate VS Code as a sidecar container for remote development using Bunnyshell. It provides a complete development environment with a full-stack application (frontend, backend, database) and VS Code accessible through a web browser.
 
+# TL;DR
 ## 🚀 Quick Start
 
 1. **Deploy the template** using Bunnyshell
 2. **Access your application** at `frontend-{your-domain}` and `backend-{your-domain}`
 3. **Open VS Code** at `code-server-{your-domain}` with the password: `password`
 
+# Description
 ## 📋 What's Included
 
 This template provides:
@@ -45,16 +47,16 @@ This template provides:
                     └─────────────────────────────────┘
 ```
 
-## ⚙️ Configuration
+# ⚙️ Configuration
 
-### Template Variables
+## Template Variables
 
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
 | `PASSWORD` | VS Code web interface password | `password` | Yes |
 | `SUDO_PASSWORD` | Sudo password for container | `password` | Yes |
 
-### Environment Variables
+## Environment Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -65,7 +67,7 @@ This template provides:
 | `PROXY_DOMAIN` | Custom proxy domain | `` |
 | `TZ` | Timezone setting | `Etc/UTC` |
 
-### Port Configuration
+## Port Configuration
 
 - **Frontend**: `8080` (main application)
 - **Backend**: `3080` (API service)
@@ -120,19 +122,19 @@ dockerCompose:
     - '8443:8443'
 ```
 
-## 🔐 Security Considerations
+# 🔐 Security Considerations
 
-### Default Credentials
+## Default Credentials
 - **VS Code Password**: `password` (change this in production!)
 - **Database Password**: `need-to-replace` (must be changed!)
 
-### Permission Management
+## Permission Management
 When using custom UID/GID:
 1. Set appropriate `PUID` and `PGID` values
 2. Ensure consistency across containers
 3. Use `id your_user` command to find your user/group IDs
 
-## 📁 File Structure
+# 📁 File Structure
 
 ```
 cs_workspace/                    # Shared workspace (accessible from both containers)
@@ -150,7 +152,7 @@ cs_workspace/                    # Shared workspace (accessible from both contai
 └── README.md                   # Project documentation
 ```
 
-## 🚀 Usage Workflow
+# 🚀 Usage Workflow
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -168,26 +170,26 @@ cs_workspace/                    # Shared workspace (accessible from both contai
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-## 🔍 Troubleshooting
+# 🔍 Troubleshooting
 
-### Common Issues
+## Common Issues
 
 **Permission Errors:**
 - Ensure `PUID` and `PGID` match your user/group IDs
 - Check that shared paths have correct permissions
 
-## 📚 Additional Resources
+# 📚 Additional Resources
 
 - [Code-Server Environment Variables](https://docs.linuxserver.io/images/docker-code-server/#environment-variables-from-files-docker-secrets)
 - [Bunnyshell Documentation](https://docs.bunnyshell.com/)
 
-## 🤝 Contributing
+# 🤝 Contributing
 
 This template is part of the Bunnyshell template collection. Feel free to:
 - Report issues
 - Suggest improvements
 - Submit pull requests
 
-## 📄 License
+# 📄 License
 
 This template is provided as-is for educational and development purposes.
