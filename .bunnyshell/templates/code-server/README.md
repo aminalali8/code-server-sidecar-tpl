@@ -1,23 +1,36 @@
 # VS Code Sidecar Integration with Bunnyshell
 
 This template demonstrates how to integrate VS Code as a sidecar container for remote development using Bunnyshell. It provides a complete development environment with a full-stack application (frontend, backend, database) and VS Code accessible through a web browser.
-
-# TL;DR
-## 🚀 Quick Start
-
-1. **Deploy the template** using Bunnyshell
-2. **Access your application** at `frontend-{your-domain}` and `backend-{your-domain}`
-3. **Open VS Code** at `code-server-{your-domain}` with the password: `password`
-
-# Description
-## 📋 What's Included
-
-This template provides:
+It provides:
 - **Frontend Application**: React-based web application
 - **Backend API**: Node.js backend service
 - **Database**: PostgreSQL database
 - **VS Code**: Web-based IDE accessible from anywhere
 - **Shared Workspace**: Code accessible from both the main app and VS Code
+
+# 🚀 TL;DR
+
+1. **Deploy the template** using Bunnyshell
+2. **Access your application** at `frontend-{your-domain}` and `backend-{your-domain}`
+3. **Open VS Code** at `code-server-{your-domain}` with the password: `password`
+
+## 🚀 Usage Workflow
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   1. Deploy     │───►│   2. Access     │───►│   3. Login to   │
+│   Environment   │    │   VS Code       │    │   VS Code       │
+│   via Bunnyshell│    │   code-server-  │    │   with Password │
+│                 │    │   {domain}      │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                                       │
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   6. Changes    │◄───│   5. Start      │◄───│   4. Open       │
+│   Auto-Sync     │    │   Coding in     │    │   Shared        │
+│   Between       │    │   Workspace     │    │   Workspace     │
+│   Containers    │    │                 │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
 
 ## 🏗️ Architecture Overview
 
@@ -25,7 +38,7 @@ This template provides:
                     ┌─────────────────────────────────────────────────────────────┐
                     │                    Bunnyshell Environment                   │
                     └─────────────────────────────────────────────────────────────┘
-                                    │
+                                     │
                     ┌────────────────┼────────────────┼────────────────┐
                     │                │                │                │
          ┌─────────────────┐ ┌──────────────────┐ ┌─────────────────┐ ┌─────────────────┐
@@ -45,6 +58,23 @@ This template provides:
                 └───│         /cs_workspace           │
                     │         (Auto-sync)             │
                     └─────────────────────────────────┘
+```
+## 📁 File Structure
+
+```
+cs_workspace/                    # Shared workspace (accessible from both containers)
+├── frontend/                    # React application source
+│   ├── src/                    # Source code directory
+│   ├── public/                 # Public assets
+│   ├── package.json            # Dependencies and scripts
+│   └── Dockerfile              # Frontend container build
+├── backend/                     # Node.js API source
+│   ├── src/                    # API source code
+│   ├── routes/                 # API endpoints
+│   ├── models/                 # Database models
+│   ├── package.json            # Backend dependencies
+│   └── Dockerfile              # Backend container build
+└── README.md                   # Project documentation
 ```
 
 # ⚙️ Configuration
@@ -133,42 +163,6 @@ When using custom UID/GID:
 1. Set appropriate `PUID` and `PGID` values
 2. Ensure consistency across containers
 3. Use `id your_user` command to find your user/group IDs
-
-# 📁 File Structure
-
-```
-cs_workspace/                    # Shared workspace (accessible from both containers)
-├── frontend/                    # React application source
-│   ├── src/                    # Source code directory
-│   ├── public/                 # Public assets
-│   ├── package.json            # Dependencies and scripts
-│   └── Dockerfile              # Frontend container build
-├── backend/                     # Node.js API source
-│   ├── src/                    # API source code
-│   ├── routes/                 # API endpoints
-│   ├── models/                 # Database models
-│   ├── package.json            # Backend dependencies
-│   └── Dockerfile              # Backend container build
-└── README.md                   # Project documentation
-```
-
-# 🚀 Usage Workflow
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   1. Deploy     │───►│   2. Access     │───►│   3. Login to   │
-│   Environment   │    │   VS Code       │    │   VS Code       │
-│   via Bunnyshell│    │   code-server-  │    │   with Password │
-│                 │    │   {domain}      │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                                       │
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   6. Changes    │◄───│   5. Start      │◄───│   4. Open       │
-│   Auto-Sync     │    │   Coding in     │    │   Shared        │
-│   Between       │    │   Workspace     │    │   Workspace     │
-│   Containers    │    │                 │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
 
 # 🔍 Troubleshooting
 
