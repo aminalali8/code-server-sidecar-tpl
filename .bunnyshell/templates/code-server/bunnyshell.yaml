@@ -2,13 +2,13 @@ kind: Environment
 name: code-server
 type: primary
 templateVariables:
-    CODE_SERVER_HOST: '0.0.0.0'
-    HASHED_PASSWORD: ''
     PASSWORD: password
+    SUDO_PASSWORD: password
+environmentVariables:
+    HASHED_PASSWORD: ''
     PGID: '0'
     PROXY_DOMAIN: ''
     PUID: '0'
-    SUDO_PASSWORD: password
     SUDO_PASSWORD_HASH: ''
     TZ: Etc/UTC
 components:
@@ -56,14 +56,9 @@ components:
             image: 'lscr.io/linuxserver/code-server:latest'
             environment:
                 DEFAULT_WORKSPACE: /cs_workspace
-                HASHED_PASSWORD: '{{template.vars.HASHED_PASSWORD}}'
+                CODE_SERVER_HOST: '0.0.0.0'
                 PASSWORD: '{{template.vars.PASSWORD}}'
-                PGID: '{{template.vars.PGID}}'
-                PROXY_DOMAIN: '{{template.vars.PROXY_DOMAIN}}'
-                PUID: '{{template.vars.PUID}}'
                 SUDO_PASSWORD: '{{template.vars.SUDO_PASSWORD}}'
-                SUDO_PASSWORD_HASH: '{{template.vars.SUDO_PASSWORD_HASH}}'
-                TZ: '{{ template.vars.TZ }}'
             ports:
                 - '8443:8443'
         volumes:
