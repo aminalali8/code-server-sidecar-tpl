@@ -2,7 +2,7 @@ kind: Environment
 name: code-server
 type: primary
 templateVariables:
-    CODE_SERVER_HOST: 'code-server-{{env.base_domain}}'
+    CODE_SERVER_HOST: '0.0.0.0'
     HASHED_PASSWORD: ''
     PASSWORD: password
     PGID: '0'
@@ -46,14 +46,14 @@ components:
                 path: /
                 servicePort: 8080
             -
-                hostname: '{{template.vars.CODE_SERVER_HOST}}'
+                hostname: 'code-server-{{env.base_domain}}'
                 path: /
                 servicePort: 8443
     -
         kind: SidecarContainer
         name: code-server
         dockerCompose:
-            image: 'lscr.io/linuxserver/code-server:4.90.3'
+            image: 'lscr.io/linuxserver/code-server:latest'
             environment:
                 DEFAULT_WORKSPACE: /cs_workspace
                 HASHED_PASSWORD: '{{template.vars.HASHED_PASSWORD}}'
