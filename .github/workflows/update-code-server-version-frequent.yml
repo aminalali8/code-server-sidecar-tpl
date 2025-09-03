@@ -16,25 +16,40 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
+          permissions: write
+
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
 
       - name: Get latest Code-Server version
         id: get-version
         run: |
-          # Get the latest version from Docker Hub
-          LATEST_VERSION=$(curl -s "https://registry.hub.docker.com/v2/repositories/linuxserver/code-server/tags/" | \
-            jq -r '.results[] | select(.name | test("^[0-9]+\\.[0-9]+\\.[0-9]+$")) | .name' | \
-            sort -V | tail -n 1)
+          # Get the latest version from Docker Hub with better error handling
+          echo "Fetching latest Code-Server version from Docker Hub..."
           
-          # Extract major.minor.patch version
-          VERSION=$(echo $LATEST_VERSION | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
+          # Try to get the latest version
+          RESPONSE=$(curl -s -w "%{http_code}" "https://registry.hub.docker.com/v2/repositories/linuxserver/code-server/tags/")
+          HTTP_CODE="${RESPONSE: -3}"
+          BODY="${RESPONSE%???}"
           
-          if [ -z "$VERSION" ]; then
-            echo "Error: Could not extract version from $LATEST_VERSION"
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "Error: Failed to fetch from Docker Hub (HTTP $HTTP_CODE)"
             exit 1
           fi
           
-          echo "Latest Code-Server version: $VERSION"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          # Extract version using jq
+          LATEST_VERSION=$(echo "$BODY" | jq -r '.results[] | select(.name | test("^[0-9]+\\.[0-9]+\\.[0-9]+$")) | .name' | sort -V | tail -n 1)
+          
+          if [ -z "$LATEST_VERSION" ] || [ "$LATEST_VERSION" = "null" ]; then
+            echo "Error: Could not extract version from Docker Hub response"
+            echo "Response body: $BODY"
+            exit 1
+          fi
+          
+          echo "Latest Code-Server version: $LATEST_VERSION"
+          echo "version=$LATEST_VERSION" >> $GITHUB_OUTPUT
 
       - name: Check if version needs updating
         id: check-version
