@@ -6,6 +6,11 @@ on:
     - cron: '0 */6 * * *'
   workflow_dispatch: # Allow manual triggering
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
   update-version:
     runs-on: ubuntu-latest
@@ -16,7 +21,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-          permissions: write
 
       - name: Install jq
         run: |
@@ -103,7 +107,7 @@ jobs:
             
             ---
             *This PR was automatically generated. Please review and merge if everything looks good.*
-          branch: update/code-server-version-frequent
+          branch: update/code-server-version-frequent-${{ steps.get-version.outputs.version }}
           delete-branch: true
           labels: |
             automated
@@ -111,6 +115,8 @@ jobs:
             code-server
             frequent-update
           assignees: ${{ github.repository_owner }}
+          committer: GitHub <noreply@github.com>
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
 
       - name: Comment on PR if no update needed
         if: steps.check-version.outputs.update_needed == 'false' && github.event_name == 'workflow_dispatch'

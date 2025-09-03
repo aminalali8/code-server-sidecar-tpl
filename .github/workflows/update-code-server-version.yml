@@ -11,6 +11,11 @@ on:
     paths:
       - '.github/workflows/update-code-server-version.yml'
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
   update-version:
     runs-on: ubuntu-latest
@@ -21,7 +26,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-          permissions: write
 
       - name: Install jq
         run: |
@@ -96,8 +100,7 @@ jobs:
             This PR automatically updates the Code-Server version in the template.
             
             **Changes:**
-            - Updated Code-Server from previous version to **${{ steps.check-version.outputs.current_version }}**
-            - Latest version: **${{ steps.get-version.outputs.version }}**
+            - Updated Code-Server to latest version **${{ steps.get-version.outputs.version }}**
             
             **Why this update:**
             - Keeps the template up-to-date with the latest Code-Server features
@@ -108,13 +111,15 @@ jobs:
             
             ---
             *This PR was automatically generated. Please review and merge if everything looks good.*
-          branch: update/code-server-version
+          branch: update/code-server-version-${{ steps.get-version.outputs.version }}
           delete-branch: true
           labels: |
             automated
             dependencies
             code-server
           assignees: ${{ github.repository_owner }}
+          committer: GitHub <noreply@github.com>
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
 
       - name: Comment on PR if no update needed
         if: steps.check-version.outputs.update_needed == 'false' && github.event_name == 'workflow_dispatch'
