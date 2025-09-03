@@ -10,7 +10,7 @@ categories:
 stack:
   packages:
     - name: Linuxserver CodeServer
-      version: 'latest'
+      version: '4.103.2'
 variables:
   - description: 'Plain text password for authentication'  
     name: 'PASSWORD'
