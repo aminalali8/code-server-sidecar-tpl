@@ -19,39 +19,30 @@ This template provides:
 
 ## 🏗️ Architecture Overview
 
-```mermaid
-graph TB
-    subgraph "Frontend Container"
-        A[Frontend<br/>React App<br/>Port: 8080]
-    end
-    
-    subgraph "Backend Container"
-        B[Backend<br/>Node.js API<br/>Port: 3080]
-    end
-    
-    subgraph "Database Container"
-        C[Database<br/>PostgreSQL<br/>Port: 5432]
-    end
-    
-    subgraph "VS Code Sidecar"
-        D[VS Code<br/>Web IDE<br/>Port: 8443]
-    end
-    
-    subgraph "Shared Workspace"
-        E[cs_workspace<br/>Source Code]
-    end
-    
-    A <--> B
-    B <--> C
-    A <--> D
-    D <--> E
-    A <--> E
-    
-    style A fill:#e1f5fe
-    style B fill:#f3e5f5
-    style C fill:#e8f5e8
-    style D fill:#fff3e0
-    style E fill:#fce4ec
+```
+                    ┌─────────────────────────────────────────────────────────────┐
+                    │                    Bunnyshell Environment                   │
+                    └─────────────────────────────────────────────────────────────┘
+                                    │
+                    ┌────────────────┼────────────────┼────────────────┐
+                    │                │                │                │
+         ┌─────────────────┐ ┌──────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+         │   Frontend      │ │   VS Code        │ │   Backend       │ │   Database      │
+         │   Container     │ │   Sidecar        │ │   Container     │ │   Container     │
+         │                 │ │                  │ │                 │ │                 │
+         │ • React App     │ │ • Web IDE        │ │ • Node.js API   │ │ • PostgreSQL    │
+         │ • Port: 8080    │ │ • Port: 8443     │ │ • Port: 3080    │ │ • Port: 5432    │
+         │ • Host: frontend│ │ • Host: code-    │ │ • Host: backend │ │ • Internal      │
+         │   -{domain}     │ │   server-{domain}│ │   -{domain}     │ │   access only   │
+         └─────────────────┘ └──────────────────┘ └─────────────────┘ └─────────────────┘
+                │                   │
+                │                   │
+                │                   │              
+                │   ┌─────────────────────────────────┐
+                │   │        Shared Workspace         │
+                └───│         /cs_workspace           │
+                    │         (Auto-sync)             │
+                    └─────────────────────────────────┘
 ```
 
 ## ⚙️ Configuration
@@ -138,46 +129,38 @@ When using custom UID/GID:
 
 ## 📁 File Structure
 
-```mermaid
-graph TD
-    A[cs_workspace] --> B[frontend/]
-    A --> C[backend/]
-    A --> D[Other Project Files]
-    
-    B --> B1[React Components]
-    B --> B2[CSS/SCSS Files]
-    B --> B3[Package.json]
-    
-    C --> C1[API Routes]
-    C --> C2[Database Models]
-    C --> C3[Middleware]
-    
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#f3e5f5
-    style D fill:#fff3e0
+```
+cs_workspace/                    # Shared workspace (accessible from both containers)
+├── frontend/                    # React application source
+│   ├── src/                    # Source code directory
+│   ├── public/                 # Public assets
+│   ├── package.json            # Dependencies and scripts
+│   └── Dockerfile              # Frontend container build
+├── backend/                     # Node.js API source
+│   ├── src/                    # API source code
+│   ├── routes/                 # API endpoints
+│   ├── models/                 # Database models
+│   ├── package.json            # Backend dependencies
+│   └── Dockerfile              # Backend container build
+└── README.md                   # Project documentation
 ```
 
 ## 🚀 Usage Workflow
 
-```mermaid
-flowchart TD
-    A[Deploy Environment<br/>using Bunnyshell] --> B[Environment Ready]
-    B --> C[Access VS Code<br/>code-server-{domain}]
-    C --> D[Login with Password]
-    D --> E[VS Code Interface Loaded]
-    E --> F[Open Shared Workspace]
-    F --> G[Start Coding]
-    G --> H[Changes Auto-Sync<br/>Between Containers]
-    
-    style A fill:#e8f5e8
-    style B fill:#e3f2fd
-    style C fill:#fff3e0
-    style D fill:#f3e5f5
-    style E fill:#e1f5fe
-    style F fill:#e8f5e8
-    style G fill:#fff3e0
-    style H fill:#e8f5e8
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   1. Deploy     │───►│   2. Access     │───►│   3. Login to   │
+│   Environment   │    │   VS Code       │    │   VS Code       │
+│   via Bunnyshell│    │   code-server-  │    │   with Password │
+│                 │    │   {domain}      │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                                       │
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   6. Changes    │◄───│   5. Start      │◄───│   4. Open       │
+│   Auto-Sync     │    │   Coding in     │    │   Shared        │
+│   Between       │    │   Workspace     │    │   Workspace     │
+│   Containers    │    │                 │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
 ## 🔍 Troubleshooting
